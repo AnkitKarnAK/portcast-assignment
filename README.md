@@ -4,6 +4,16 @@
 
 This project is a React application that provides a user interface for viewing and interacting with cryptocurrency data. It includes features such as displaying a list of cryptocurrencies, marking favorites, and daily price average.
 
+## Tech Stack
+  - React 
+  - TypeScript
+  - Shadcn (component library)
+  - Tailwind CSS
+  - Tanstack Router (for nvaigation & routing)
+  - Zustand (for state management)
+  - Jest, React Testing Library
+  - Chart.Js 
+
 ## Installation
 
 To get started with this project, follow these steps:
@@ -30,6 +40,23 @@ pnpm run dev
 ```
 
 This will start the development server, and you can view the application in your browser at `http://localhost:5173`.
+
+## Features
+
+- Table Page:
+  - Crptocurrentcy data in table
+  - pagination
+  - sorting (clicking on table coulmn header)
+  - real time updates of pricing using websocket
+  - Add or revome from favourites
+  - Bonus: UI indicating increase or decrease in current price.
+
+- Crypto Details
+  - Details of crypto clicked.
+  - graph showcasing last 30 days daily avg price
+
+- Testing
+  - added few test cases using Jest & react Testing library
 
 
 ## Project Structure
