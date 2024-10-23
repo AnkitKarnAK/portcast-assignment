@@ -15,9 +15,13 @@ export const formatNumber = (value: number | string) => {
 }
 
 export const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+        return "Invalid Date";
+    }
     return new Intl.DateTimeFormat('en-US', {
         day: 'numeric',
         month: 'short',
         year: 'numeric',
-    }).format(new Date(dateString));
+    }).format(date);
 };
