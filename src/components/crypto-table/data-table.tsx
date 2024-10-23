@@ -42,7 +42,6 @@ export function DataTable<TData, TValue>({
   const [realTimePrices, setRealTimePrices] = useState<{ [key: string]: string }>({});
   const [priceChange, setPriceChange] = useState<PriceChange>({});
 
-
   const { sorting, setSorting } = useTableStore()
 
   const table = useReactTable({
@@ -56,6 +55,8 @@ export function DataTable<TData, TValue>({
       sorting,
     },
   })
+
+  const visibleRowIds = table.getRowModel().rows.map((row) => (row.original as CryptoTableItem).id).join(',');
 
   const throttledUpdatePrices = Throttle((newPrices: Record<string, string>) => {
     setRealTimePrices((prevPrices) => {
@@ -83,9 +84,7 @@ export function DataTable<TData, TValue>({
   }, 2000)
 
   useEffect(() => {
-    const assetIds = data.slice(0, 10).map((asset) => (asset as CryptoTableItem).id).join(',');
-
-    const ws = new WebSocket(`wss://ws.coincap.io/prices?assets=${assetIds}`);
+    const ws = new WebSocket(`wss://ws.coincap.io/prices?assets=${visibleRowIds}`);
 
     ws.onmessage = (event) => {
       const updatedPrices = JSON.parse(event.data);
@@ -96,7 +95,7 @@ export function DataTable<TData, TValue>({
     return () => {
       ws.close();
     };
-  }, []);
+  }, [visibleRowIds]);
 
 
   return (
