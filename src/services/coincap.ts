@@ -2,6 +2,10 @@ export const CoincapApi = {
     async getAssets(): Promise<AssetsResponse> {
         const response = await fetch('https://api.coincap.io/v2/assets')
         return response.json()
+    },
+    async getAsset(id: string): Promise<Asset> {
+        const response = await fetch(`https://api.coincap.io/v2/assets/${id}`)
+        return response.json()
     }
 }
 
