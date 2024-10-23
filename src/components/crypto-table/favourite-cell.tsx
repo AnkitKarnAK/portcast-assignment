@@ -7,7 +7,10 @@ export const FavoriteCell = ({ symbol }: { symbol: string }) => {
     const isFavorite = favorites.includes(symbol);
 
     return (
-        <Button variant="ghost" onClick={() => toggleFavorite(symbol)}>
+        <Button variant="ghost" onClick={(e) => {
+            e.stopPropagation();
+            toggleFavorite(symbol)
+        }}>
             {isFavorite ? <Star className="h-5 w-5 text-yellow-500 fill-current" /> : <StarOff className="h-4 w-4" />}
         </Button>
     );
