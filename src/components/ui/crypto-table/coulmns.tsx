@@ -2,10 +2,8 @@ import { formatCurrency, formatNumber } from "@/utils/tranformers.utils"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { FavoriteCell } from "./favourite-cell"
 
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type CryptoTableItem = {
   rank: string
   name: string
@@ -91,5 +89,11 @@ export const columns: ColumnDef<CryptoTableItem>[] = [
       return formatNumber(row.getValue("marketCapUsd"))
     }
   },
+
+  {
+    id: "favorite",
+    header: "Favorites",
+    cell: ({ row }) => <FavoriteCell symbol={row.original.symbol} />,
+  }
 
 ]

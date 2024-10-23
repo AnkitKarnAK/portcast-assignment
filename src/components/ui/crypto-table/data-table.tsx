@@ -1,6 +1,5 @@
 import {
   ColumnDef,
-  SortingState,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -17,9 +16,9 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import { useState } from "react"
 import { DataTablePagination } from "./data-table-pagination"
 
+import { useTableStore } from "@/stores/crypto-table.stores"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -30,7 +29,9 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([])
+  // const [sorting, setSorting] = useState<SortingState>([])
+
+  const { sorting, setSorting } = useTableStore()
 
   const table = useReactTable({
     data,
