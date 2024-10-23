@@ -1,7 +1,7 @@
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
 import { CoincapApi } from '@/services/coincap'
-import { DataTable } from '@/components/ui/crypto-table/data-table';
-import { columns } from '@/components/ui/crypto-table/coulmns';
+import { DataTable } from '@/components/crypto-table/data-table';
+import { columns, CryptoTableItem } from '@/components/crypto-table/coulmns';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -11,7 +11,8 @@ export const Route = createFileRoute('/')({
 function Index() {
   const { data: assets } = useLoaderData({ from: "/" });
 
-  const tableData = assets.map((asset) => ({
+  const tableData: CryptoTableItem[] = assets.map((asset) => ({
+    id: asset.id,
     rank: asset.rank,
     name: asset.name,
     symbol: asset.symbol,

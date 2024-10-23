@@ -13,3 +13,11 @@ export const formatNumber = (value: number | string) => {
         maximumFractionDigits: 2
     }).format(Number(value)) : value
 }
+
+export const formatDate = (dateString: string): string => {
+    return new Intl.DateTimeFormat('en-US', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    }).format(new Date(dateString));
+};

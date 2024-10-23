@@ -19,6 +19,8 @@ import {
 import { DataTablePagination } from "./data-table-pagination"
 
 import { useTableStore } from "@/stores/crypto-table.stores"
+import { useNavigate } from "@tanstack/react-router"
+import { CryptoTableItem } from "./coulmns"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -29,6 +31,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const navigate = useNavigate()
   // const [sorting, setSorting] = useState<SortingState>([])
 
   const { sorting, setSorting } = useTableStore()
@@ -73,6 +76,12 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => {
+                    navigate({
+                      to: `/details/$id`,
+                      params: { id: (row.original as CryptoTableItem).id },
+                    })
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

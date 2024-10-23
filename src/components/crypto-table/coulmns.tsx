@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { FavoriteCell } from "./favourite-cell"
 
 export type CryptoTableItem = {
+  id: string
   rank: string
   name: string
   symbol: string
@@ -64,8 +65,6 @@ export const columns: ColumnDef<CryptoTableItem>[] = [
   {
     accessorKey: "priceUsd",
     header: ({ column }) => {
-      console.log("xxxxx", column.getIsSorted());
-
       return (
         <Button
           variant="ghost"
