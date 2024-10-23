@@ -21,9 +21,6 @@ export const Route = createFileRoute('/details/$id')({
 function CryptoDetails() {
     const { asset, assetHistory } = useLoaderData({ from: "/details/$id" })
 
-    console.log("asset", assetHistory);
-
-
     return (
         <div>
             <CryptoInfo crypto={asset} />

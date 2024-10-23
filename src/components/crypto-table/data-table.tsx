@@ -21,6 +21,12 @@ import { DataTablePagination } from "./data-table-pagination"
 import { useTableStore } from "@/stores/crypto-table.stores"
 import { useNavigate } from "@tanstack/react-router"
 import { CryptoTableItem } from "./coulmns"
+import { useEffect, useState } from "react"
+import { Throttle } from "@/utils/functions.utils"
+
+interface PriceChange {
+  [key: string]: 'increase' | 'decrease' | null;
+}
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -33,6 +39,9 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const navigate = useNavigate()
   // const [sorting, setSorting] = useState<SortingState>([])
+  const [realTimePrices, setRealTimePrices] = useState<{ [key: string]: string }>({});
+  const [priceChange, setPriceChange] = useState<PriceChange>({});
+
 
   const { sorting, setSorting } = useTableStore()
 
@@ -48,9 +57,51 @@ export function DataTable<TData, TValue>({
     },
   })
 
+  const throttledUpdatePrices = Throttle((newPrices: Record<string, string>) => {
+    setRealTimePrices((prevPrices) => {
+      const updatedPrices = { ...prevPrices, ...newPrices };
+
+      const updatedChanges: PriceChange = { ...priceChange };
+      Object.keys(newPrices).forEach((id) => {
+        const previousPrice = parseFloat(prevPrices[id]);
+        const currentPrice = parseFloat(newPrices[id]);
+
+        if (!isNaN(previousPrice) && !isNaN(currentPrice)) {
+          if (currentPrice > previousPrice) {
+            updatedChanges[id] = 'increase';
+          } else if (currentPrice < previousPrice) {
+            updatedChanges[id] = 'decrease';
+          } else {
+            updatedChanges[id] = null;
+          }
+        }
+      });
+
+      setPriceChange(updatedChanges);
+      return updatedPrices;
+    });
+  }, 2000)
+
+  useEffect(() => {
+    const assetIds = data.slice(0, 10).map((asset) => (asset as CryptoTableItem).id).join(',');
+
+    const ws = new WebSocket(`wss://ws.coincap.io/prices?assets=${assetIds}`);
+
+    ws.onmessage = (event) => {
+      const updatedPrices = JSON.parse(event.data);
+
+      throttledUpdatePrices(updatedPrices);
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
+
+
   return (
     <div>
-      <div className="rounded-md border">
+      <div className="rounded-md border text-center">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -72,24 +123,38 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  onClick={() => {
-                    navigate({
-                      to: `/details/$id`,
-                      params: { id: (row.original as CryptoTableItem).id },
-                    })
-                  }}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row) => {
+                const id = (row.original as CryptoTableItem).id;
+                const rowClass = priceChange[id] === 'increase'
+                  ? 'bg-green-100'
+                  : priceChange[id] === 'decrease'
+                    ? 'bg-red-100'
+                    : '';
+
+                return (
+                  <TableRow
+                    key={row.id}
+                    className={rowClass}
+                    data-state={row.getIsSelected() && "selected"}
+                    onClick={() => {
+                      navigate({
+                        to: `/details/$id`,
+                        params: { id: (row.original as CryptoTableItem).id },
+                      })
+                    }}
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      const realTimeData = realTimePrices[(row.original as CryptoTableItem).id]
+
+                      return (
+                        <TableCell key={cell.id}>
+                          {cell.column.id === "priceUsd" && !!realTimeData ? realTimeData : flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      )
+                    })}
+                  </TableRow>
+                )
+              })
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
