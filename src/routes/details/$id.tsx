@@ -22,9 +22,11 @@ function CryptoDetails() {
     const { asset, assetHistory } = useLoaderData({ from: "/details/$id" })
 
     return (
-        <div>
-            <CryptoInfo crypto={asset} />
-            <AssetHistoryChart history={assetHistory} />
+        <div className="p-2">
+            <div className="container mx-auto py-10">
+                <CryptoInfo crypto={asset} />
+                <AssetHistoryChart history={assetHistory} />
+            </div>
         </div>
     )
 }
