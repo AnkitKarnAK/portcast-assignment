@@ -2,7 +2,13 @@
 
 ## Description
 
-This project is a React application that provides a user interface for viewing and interacting with cryptocurrency data. It includes features such as displaying a list of cryptocurrencies, marking favorites, and daily price average.
+ptocurrencies, marking favorites, and daily price average.
+This project is a React application that provides a user interface for viewing and interacting with cryptocurrency data. It includes features such as displaying a list of cry!
+
+![screen-capture1-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/cfdf6c12-bfd3-445c-8318-ef4eda8a1135)
+
+
+
 
 ## Tech Stack
   - React 
